@@ -4,7 +4,7 @@ This module can be extended independently for health check functionality.
 """
 
 from typing import Dict, Any
-from app.services.system_metrics import SystemMetricsService
+from baja_testbench.services.system_metrics import SystemMetricsService
 
 
 class HealthCheckModule:

@@ -3,7 +3,7 @@ API v1 router aggregation.
 """
 
 from fastapi import APIRouter
-from app.api.v1 import health
+from baja_testbench.api.v1 import health
 
 api_router = APIRouter()
 

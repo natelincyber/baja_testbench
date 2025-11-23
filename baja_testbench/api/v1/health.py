@@ -3,9 +3,9 @@ Health check API endpoints.
 """
 
 from fastapi import APIRouter, Depends
-from app.models.health import HealthResponse
-from app.services.system_metrics import SystemMetricsService
-from app.api.deps import get_metrics_service
+from baja_testbench.models.health import HealthResponse
+from baja_testbench.services.system_metrics import SystemMetricsService
+from baja_testbench.api.deps import get_metrics_service
 
 router = APIRouter()
 

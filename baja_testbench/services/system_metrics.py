@@ -7,7 +7,7 @@ import psutil
 import subprocess
 import platform
 from typing import Dict, Any
-from app.core.config import settings
+from baja_testbench.core.config import settings
 
 
 class SystemMetricsService:

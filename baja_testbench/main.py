@@ -4,8 +4,8 @@ FastAPI application factory and main entry point.
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings
-from app.api.v1.router import api_router
+from baja_testbench.core.config import settings
+from baja_testbench.api.v1.router import api_router
 
 
 def create_application() -> FastAPI:

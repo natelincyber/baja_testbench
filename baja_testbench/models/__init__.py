@@ -1,6 +1,6 @@
 """Pydantic models for request/response validation."""
 
-from app.models.health import (
+from baja_testbench.models.health import (
     HealthResponse,
     SystemInfo,
     CPUInfo,
