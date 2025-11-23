@@ -25,7 +25,6 @@ def create_application() -> FastAPI:
         debug=settings.debug,
     )
     
-    # CORS middleware
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
@@ -33,8 +32,7 @@ def create_application() -> FastAPI:
         allow_methods=settings.cors_allow_methods,
         allow_headers=settings.cors_allow_headers,
     )
-    
-    # Mount static files
+
     static_dir = Path(__file__).parent.parent / "static"
     if static_dir.exists():
         app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
@@ -45,7 +43,6 @@ def create_application() -> FastAPI:
     # Serve frontend
     @app.get("/")
     async def serve_frontend():
-        """Serve the frontend application."""
         static_file = static_dir / "index.html"
         if static_file.exists():
             return FileResponse(str(static_file))
@@ -59,7 +56,6 @@ def create_application() -> FastAPI:
             }
         }
     
-    # WebSocket endpoint for real-time health updates
     @app.websocket("/ws/system-stream")
     async def websocket_health_stream(websocket: WebSocket):
         """WebSocket endpoint for streaming system health data."""
@@ -71,7 +67,6 @@ def create_application() -> FastAPI:
                 # Get current health metrics
                 metrics = metrics_service.get_all_metrics()
                 
-                # Send to client
                 await websocket.send_json(metrics)
                 
                 # Wait 2 seconds before next update
@@ -85,7 +80,6 @@ def create_application() -> FastAPI:
     return app
 
 
-# Create the application instance
 app = create_application()
 
 

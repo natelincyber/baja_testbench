@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Application entry point for running the FastAPI server.
-"""
-
 import uvicorn
 from baja_testbench.core.config import settings
 

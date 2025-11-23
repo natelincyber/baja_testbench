@@ -19,10 +19,8 @@ class SystemMetricsService:
     
     @classmethod
     def _initialize_cpu_percent(cls):
-        """Initialize CPU percent measurement (required for non-blocking calls)."""
         if not cls._cpu_percent_initialized:
             try:
-                # First call with interval to establish baseline
                 cls._last_cpu_percent = psutil.cpu_percent(interval=0.1)
                 cls._cpu_percent_initialized = True
             except Exception:
@@ -40,7 +38,6 @@ class SystemMetricsService:
             )
             if result.returncode == 0:
                 temp_str = result.stdout.strip()
-                # Extract temperature value (e.g., "temp=47.3'C")
                 temp_value = temp_str.split("=")[1].replace("'C", "")
                 return {
                     "raw": temp_str,
@@ -119,23 +116,13 @@ class SystemMetricsService:
             cls._initialize_cpu_percent()
             
             # Use non-blocking cpu_percent (requires previous initialization)
-            # This gives immediate results without blocking
             cpu_percent = psutil.cpu_percent(interval=None)
             
-            # If we get 0.0, it might be because:
-            # 1. System is truly idle (unlikely with FastAPI running)
-            # 2. Not initialized properly yet
-            # 3. Measurement interval issue
-            # Use last known value if current is suspiciously 0.0
             if cpu_percent == 0.0 and cls._last_cpu_percent > 0.0:
-                # Keep last known value if current reading is 0.0
-                # This prevents showing 0% when server is clearly running
                 cpu_percent = cls._last_cpu_percent
             elif cpu_percent > 0.0:
-                # Update last known value
                 cls._last_cpu_percent = cpu_percent
             
-            # If still 0.0 and not initialized, do a blocking call
             if cpu_percent == 0.0 and not cls._cpu_percent_initialized:
                 cpu_percent = psutil.cpu_percent(interval=0.1)
                 cls._last_cpu_percent = cpu_percent
@@ -263,7 +250,6 @@ class SystemMetricsService:
         }
 
 
-# Initialize CPU percent on module import
 SystemMetricsService._initialize_cpu_percent()
 
 
