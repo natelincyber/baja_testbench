@@ -123,11 +123,38 @@
                         <div class="metric-card">
                             <div class="metric-header">
                                 <span class="metric-icon">🔋</span>
-                                <span class="metric-label">Voltage</span>
+                                <span class="metric-label">Voltage & Throttling</span>
                             </div>
                             <div class="metric-value" id="voltage-status">--</div>
                             <div class="metric-details">
-                                <span id="throttle-info">--</span>
+                                <div id="voltage-details">--</div>
+                            </div>
+                            <div class="voltage-warnings" id="voltage-warnings" style="display: none;">
+                                <div class="warning-list" id="warning-list"></div>
+                            </div>
+                        </div>
+
+                        <!-- Process Count Card -->
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-icon">⚙️</span>
+                                <span class="metric-label">Processes</span>
+                            </div>
+                            <div class="metric-value" id="process-count">--</div>
+                            <div class="metric-details">
+                                <span id="process-details">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Disk I/O Card -->
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-icon">📊</span>
+                                <span class="metric-label">Disk I/O</span>
+                            </div>
+                            <div class="metric-value" id="disk-io-read">--</div>
+                            <div class="metric-details">
+                                <span>Read</span> / <span id="disk-io-write">--</span> <span>Write</span>
                             </div>
                         </div>
                     </div>

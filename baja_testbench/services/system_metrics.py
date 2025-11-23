@@ -193,6 +193,18 @@ class SystemMetricsService:
             "hostname": platform.node(),
         }
     
+    @staticmethod
+    def get_process_count() -> Dict[str, Any]:
+        """Get process count information."""
+        try:
+            process_count = len(psutil.pids())
+            return {
+                "count": process_count,
+                "available": True
+            }
+        except Exception as e:
+            return {"error": str(e), "available": False}
+    
     @classmethod
     def get_all_metrics(cls) -> Dict[str, Any]:
         """Get all system metrics in a single call."""
@@ -204,6 +216,7 @@ class SystemMetricsService:
             "voltage": cls.get_throttle_status(),
             "network": cls.get_network_stats(),
             "disk": cls.get_disk_info(),
+            "process_count": cls.get_process_count(),
         }
 
 

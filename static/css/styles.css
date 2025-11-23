@@ -602,6 +602,71 @@ body {
     font-size: 0.875rem;
 }
 
+/* Voltage Warnings */
+.voltage-warnings {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.warning-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.warning-item {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background: var(--bg-primary);
+    border-left: 3px solid var(--warning-color);
+}
+
+.warning-item.warning-high {
+    border-left-color: var(--error-color);
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.warning-item.warning-medium {
+    border-left-color: var(--warning-color);
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.warning-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.warning-desc {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.warning-history {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background: var(--bg-primary);
+    border-left: 3px solid var(--text-muted);
+    opacity: 0.7;
+}
+
+.voltage-ok {
+    color: var(--success-color);
+}
+
+.voltage-warning {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+#voltage-details {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .nav-container {
