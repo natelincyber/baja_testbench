@@ -2,10 +2,15 @@
 FastAPI application factory and main entry point.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import asyncio
+from pathlib import Path
 from baja_testbench.core.config import settings
 from baja_testbench.api.v1.router import api_router
+from baja_testbench.services.system_metrics import SystemMetricsService
 
 
 def create_application() -> FastAPI:
@@ -29,12 +34,21 @@ def create_application() -> FastAPI:
         allow_headers=settings.cors_allow_headers,
     )
     
+    # Mount static files
+    static_dir = Path(__file__).parent.parent / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+    
     # Include API routers
     app.include_router(api_router, prefix=settings.api_v1_prefix)
     
+    # Serve frontend
     @app.get("/")
-    async def root():
-        """Root endpoint with API information."""
+    async def serve_frontend():
+        """Serve the frontend application."""
+        static_file = static_dir / "index.html"
+        if static_file.exists():
+            return FileResponse(str(static_file))
         return {
             "name": settings.app_name,
             "version": settings.app_version,
@@ -44,6 +58,29 @@ def create_application() -> FastAPI:
                 "/redoc": "Alternative API documentation"
             }
         }
+    
+    # WebSocket endpoint for real-time health updates
+    @app.websocket("/ws/system-stream")
+    async def websocket_health_stream(websocket: WebSocket):
+        """WebSocket endpoint for streaming system health data."""
+        await websocket.accept()
+        metrics_service = SystemMetricsService()
+        
+        try:
+            while True:
+                # Get current health metrics
+                metrics = metrics_service.get_all_metrics()
+                
+                # Send to client
+                await websocket.send_json(metrics)
+                
+                # Wait 2 seconds before next update
+                await asyncio.sleep(2)
+        except WebSocketDisconnect:
+            print("WebSocket client disconnected")
+        except Exception as e:
+            print(f"WebSocket error: {e}")
+            await websocket.close()
     
     return app
 

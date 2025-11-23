@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baja Testbench HIL - Dashboard</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <h1>Baja Testbench</h1>
+                    <span class="nav-subtitle">HIL System</span>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#/" class="nav-link active" data-route="/">Home</a></li>
+                    <li><a href="#/tests" class="nav-link" data-route="/tests">Tests</a></li>
+                    <li><a href="#/outputs" class="nav-link" data-route="/outputs">Outputs</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Homepage Route -->
+            <div id="route-home" class="route active">
+                <div class="page-header">
+                    <h2>System Dashboard</h2>
+                    <p class="page-description">Monitor system health and manage HIL tests</p>
+                </div>
+
+                <!-- System Health Widget -->
+                <div class="health-widget">
+                    <div class="widget-header">
+                        <h3>System Health</h3>
+                        <div class="status-indicator">
+                            <span class="status-dot" id="health-status-dot"></span>
+                            <span id="health-status-text">Loading...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="health-grid">
+                        <!-- CPU Card -->
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-icon">⚡</span>
+                                <span class="metric-label">CPU</span>
+                            </div>
+                            <div class="metric-value" id="cpu-usage">--</div>
+                            <div class="metric-details">
+                                <span id="cpu-freq">--</span>
+                                <span id="cpu-cores">--</span>
+                            </div>
+                            <div class="metric-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="cpu-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Memory Card -->
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-icon">💾</span>
+                                <span class="metric-label">Memory</span>
+                            </div>
+                            <div class="metric-value" id="memory-usage">--</div>
+                            <div class="metric-details">
+                                <span id="memory-used">--</span> / <span id="memory-total">--</span>
+                            </div>
+                            <div class="metric-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="memory-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Temperature Card -->
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-icon">🌡️</span>
+                                <span class="metric-label">Temperature</span>
+                            </div>
+                            <div class="metric-value" id="temperature">--</div>
+                            <div class="metric-details">
+                                <span id="temp-status">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Network Card -->
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-icon">📡</span>
+                                <span class="metric-label">Network</span>
+                            </div>
+                            <div class="metric-value" id="network-up">--</div>
+                            <div class="metric-details">
+                                <span>↑</span> <span id="network-down">--</span> <span>↓</span>
+                            </div>
+                        </div>
+
+                        <!-- Disk Card -->
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-icon">💿</span>
+                                <span class="metric-label">Disk</span>
+                            </div>
+                            <div class="metric-value" id="disk-usage">--</div>
+                            <div class="metric-details">
+                                <span id="disk-used">--</span> / <span id="disk-total">--</span>
+                            </div>
+                            <div class="metric-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="disk-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Voltage/Throttle Card -->
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-icon">🔋</span>
+                                <span class="metric-label">Voltage</span>
+                            </div>
+                            <div class="metric-value" id="voltage-status">--</div>
+                            <div class="metric-details">
+                                <span id="throttle-info">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="system-info">
+                        <div class="info-item">
+                            <span class="info-label">Platform:</span>
+                            <span id="system-platform">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Hostname:</span>
+                            <span id="system-hostname">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Architecture:</span>
+                            <span id="system-arch">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-grid">
+                        <button class="action-btn" onclick="router.navigate('/tests')">
+                            <span class="action-icon">🧪</span>
+                            <span class="action-label">Run Tests</span>
+                        </button>
+                        <button class="action-btn" onclick="router.navigate('/outputs')">
+                            <span class="action-icon">📊</span>
+                            <span class="action-label">View Outputs</span>
+                        </button>
+                        <button class="action-btn" onclick="refreshHealth()">
+                            <span class="action-icon">🔄</span>
+                            <span class="action-label">Refresh Health</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tests Route -->
+            <div id="route-tests" class="route">
+                <div class="page-header">
+                    <h2>Test Suite</h2>
+                    <p class="page-description">Execute and manage HIL test suites</p>
+                </div>
+
+                <div class="tests-container">
+                    <!-- Actuator Response Validation -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <h3>Actuator Response Validation (ECVT System)</h3>
+                            <span class="test-status badge-placeholder">Ready</span>
+                        </div>
+                        <p class="test-description">
+                            Validate that the mock ECVT actuator reaches commanded belt positions within a defined tolerance and timing window.
+                        </p>
+                        <div class="test-actions">
+                            <button class="btn btn-primary" onclick="runTest('actuator')">Run Test</button>
+                            <button class="btn btn-secondary" onclick="viewTestDetails('actuator')">View Details</button>
+                        </div>
+                        <div class="test-progress" id="test-actuator-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center-Lock Engagement Test -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <h3>Center-Lock Engagement Test</h3>
+                            <span class="test-status badge-placeholder">Ready</span>
+                        </div>
+                        <p class="test-description">
+                            Ensure mechanical dog clutch engages/disengages reliably under simulated torque loads.
+                        </p>
+                        <div class="test-actions">
+                            <button class="btn btn-primary" onclick="runTest('center-lock')">Run Test</button>
+                            <button class="btn btn-secondary" onclick="viewTestDetails('center-lock')">View Details</button>
+                        </div>
+                        <div class="test-progress" id="test-center-lock-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- O-Drive Fault Tolerance Tests -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <h3>O-Drive Fault Tolerance Tests</h3>
+                            <span class="test-status badge-placeholder">Ready</span>
+                        </div>
+                        <p class="test-description">
+                            Ensure unsafe commands and noisy input do not produce uncontrolled behavior.
+                        </p>
+                        <div class="test-actions">
+                            <button class="btn btn-primary" onclick="runTest('odrive-fault')">Run Test</button>
+                            <button class="btn btn-secondary" onclick="viewTestDetails('odrive-fault')">View Details</button>
+                        </div>
+                        <div class="test-progress" id="test-odrive-fault-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sensor Simulation Sanity Tests -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <h3>Sensor Simulation Sanity Tests</h3>
+                            <span class="test-status badge-placeholder">Ready</span>
+                        </div>
+                        <p class="test-description">
+                            Verify simulated drivetrain signals mimic real-world behavior so higher-level software can be tested without the real vehicle.
+                        </p>
+                        <div class="test-actions">
+                            <button class="btn btn-primary" onclick="runTest('sensor-sim')">Run Test</button>
+                            <button class="btn btn-secondary" onclick="viewTestDetails('sensor-sim')">View Details</button>
+                        </div>
+                        <div class="test-progress" id="test-sensor-sim-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Telemetry Integrity Test -->
+                    <div class="test-card">
+                        <div class="test-header">
+                            <h3>Telemetry Integrity Test</h3>
+                            <span class="test-status badge-placeholder">Ready</span>
+                        </div>
+                        <p class="test-description">
+                            Validate that the telemetry stack can stream high-frequency data without corruption or packet loss.
+                        </p>
+                        <div class="test-actions">
+                            <button class="btn btn-primary" onclick="runTest('telemetry')">Run Test</button>
+                            <button class="btn btn-secondary" onclick="viewTestDetails('telemetry')">View Details</button>
+                        </div>
+                        <div class="test-progress" id="test-telemetry-progress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outputs Route -->
+            <div id="route-outputs" class="route">
+                <div class="page-header">
+                    <h2>Test Outputs</h2>
+                    <p class="page-description">View and analyze test results and data</p>
+                </div>
+
+                <div class="outputs-container">
+                    <!-- Output Type Selector -->
+                    <div class="output-type-selector">
+                        <button class="output-type-btn active" data-type="logs">Logs</button>
+                        <button class="output-type-btn" data-type="graphs">Graphs</button>
+                        <button class="output-type-btn" data-type="metrics">Metrics</button>
+                        <button class="output-type-btn" data-type="reports">Reports</button>
+                    </div>
+
+                    <!-- Logs Output -->
+                    <div class="output-panel active" id="output-logs">
+                        <div class="output-header">
+                            <h3>Test Logs</h3>
+                            <div class="output-controls">
+                                <button class="btn btn-sm" onclick="clearLogs()">Clear</button>
+                                <button class="btn btn-sm" onclick="exportLogs()">Export</button>
+                            </div>
+                        </div>
+                        <div class="log-viewer" id="log-viewer">
+                            <div class="log-entry">
+                                <span class="log-time">[2024-01-01 12:00:00]</span>
+                                <span class="log-level info">[INFO]</span>
+                                <span class="log-message">System initialized. Ready for tests.</span>
+                            </div>
+                            <div class="log-entry">
+                                <span class="log-time">[2024-01-01 12:00:05]</span>
+                                <span class="log-level info">[INFO]</span>
+                                <span class="log-message">Health check endpoint active.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Graphs Output -->
+                    <div class="output-panel" id="output-graphs">
+                        <div class="output-header">
+                            <h3>Test Graphs</h3>
+                            <div class="output-controls">
+                                <select class="graph-selector">
+                                    <option>Select Test...</option>
+                                    <option>Actuator Response</option>
+                                    <option>Center-Lock Engagement</option>
+                                    <option>O-Drive Fault Tolerance</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="graph-placeholder">
+                            <div class="placeholder-content">
+                                <span class="placeholder-icon">📈</span>
+                                <p>No graph data available. Run a test to generate graphs.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Output -->
+                    <div class="output-panel" id="output-metrics">
+                        <div class="output-header">
+                            <h3>Test Metrics</h3>
+                            <div class="output-controls">
+                                <button class="btn btn-sm" onclick="refreshMetrics()">Refresh</button>
+                            </div>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-name">Tests Run</span>
+                                <span class="metric-value">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">Tests Passed</span>
+                                <span class="metric-value">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">Tests Failed</span>
+                                <span class="metric-value">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-name">Success Rate</span>
+                                <span class="metric-value">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports Output -->
+                    <div class="output-panel" id="output-reports">
+                        <div class="output-header">
+                            <h3>Test Reports</h3>
+                            <div class="output-controls">
+                                <button class="btn btn-sm" onclick="generateReport()">Generate Report</button>
+                            </div>
+                        </div>
+                        <div class="reports-list">
+                            <div class="report-item">
+                                <div class="report-info">
+                                    <span class="report-name">No reports available</span>
+                                    <span class="report-date">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/js/router.js"></script>
+    <script src="/static/js/health.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
+
