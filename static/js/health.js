@@ -194,43 +194,85 @@ class HealthMonitor {
                     
                     // Historical issues (occurred but not currently active)
                     if (flags.under_voltage_occurred && !flags.under_voltage) {
-                        occurredIssues.push('Under voltage occurred in past');
+                        occurredIssues.push({
+                            name: 'Under Voltage (Past)',
+                            description: 'Under voltage condition occurred previously but is not currently active.',
+                            severity: 'low'
+                        });
                     }
                     if (flags.throttled_occurred && !flags.throttled) {
-                        occurredIssues.push('Throttling occurred in past');
+                        occurredIssues.push({
+                            name: 'CPU Throttling (Past)',
+                            description: 'CPU throttling occurred previously but is not currently active.',
+                            severity: 'low'
+                        });
                     }
                     if (flags.frequency_capped_occurred && !flags.frequency_capped) {
-                        occurredIssues.push('Frequency capping occurred in past');
+                        occurredIssues.push({
+                            name: 'Frequency Capping (Past)',
+                            description: 'Frequency capping occurred previously but is not currently active.',
+                            severity: 'low'
+                        });
                     }
                     if (flags.soft_temp_limit_occurred && !flags.soft_temp_limit) {
-                        occurredIssues.push('Soft temp limit occurred in past');
+                        occurredIssues.push({
+                            name: 'Soft Temp Limit (Past)',
+                            description: 'Soft temperature limit was reached previously but is not currently active.',
+                            severity: 'low'
+                        });
                     }
                     
-                    if (activeIssues.length > 0) {
-                        detailsEl.innerHTML = `<strong>${activeIssues.length} active issue(s)</strong>`;
-                        warningsEl.style.display = 'block';
-                        warningListEl.innerHTML = activeIssues.map(issue => `
-                            <div class="warning-item warning-${issue.severity}">
-                                <div class="warning-title">⚠️ ${issue.name}</div>
-                                <div class="warning-desc">${issue.description}</div>
-                            </div>
-                        `).join('');
+                    // Always show warnings if there are any issues (active or historical)
+                    if (activeIssues.length > 0 || occurredIssues.length > 0) {
+                        if (activeIssues.length > 0) {
+                            detailsEl.innerHTML = `<strong>${activeIssues.length} active issue(s)</strong>`;
+                        } else {
+                            detailsEl.innerHTML = `<strong>Historical issues detected</strong>`;
+                        }
                         
-                        if (occurredIssues.length > 0) {
-                            warningListEl.innerHTML += `
-                                <div class="warning-history">
-                                    <div class="warning-title">History:</div>
-                                    <div class="warning-desc">${occurredIssues.join(', ')}</div>
+                        warningsEl.style.display = 'block';
+                        warningListEl.innerHTML = '';
+                        
+                        // Show active issues first
+                        if (activeIssues.length > 0) {
+                            warningListEl.innerHTML = activeIssues.map(issue => `
+                                <div class="warning-item warning-${issue.severity}">
+                                    <div class="warning-title">⚠️ ${issue.name}</div>
+                                    <div class="warning-desc">${issue.description}</div>
                                 </div>
-                            `;
+                            `).join('');
+                        }
+                        
+                        // Then show historical issues
+                        if (occurredIssues.length > 0) {
+                            warningListEl.innerHTML += occurredIssues.map(issue => `
+                                <div class="warning-item warning-${issue.severity}">
+                                    <div class="warning-title">📋 ${issue.name}</div>
+                                    <div class="warning-desc">${issue.description}</div>
+                                </div>
+                            `).join('');
                         }
                     } else {
-                        detailsEl.textContent = 'No active issues';
-                        warningsEl.style.display = 'none';
+                        // Status is WARNING but no flags set - show raw data
+                        detailsEl.innerHTML = `<strong>Warning detected</strong> (hex: ${data.voltage.hex_value || 'N/A'})`;
+                        warningsEl.style.display = 'block';
+                        warningListEl.innerHTML = `
+                            <div class="warning-item warning-medium">
+                                <div class="warning-title">⚠️ System Warning</div>
+                                <div class="warning-desc">Throttling status indicates a warning condition, but specific details are unavailable. Check system logs for more information.</div>
+                            </div>
+                        `;
                     }
                 } else {
-                    detailsEl.textContent = 'Status: WARNING (details unavailable)';
-                    warningsEl.style.display = 'none';
+                    // No flags available but status is WARNING
+                    detailsEl.innerHTML = `<strong>Warning detected</strong>`;
+                    warningsEl.style.display = 'block';
+                    warningListEl.innerHTML = `
+                        <div class="warning-item warning-medium">
+                            <div class="warning-title">⚠️ System Warning</div>
+                            <div class="warning-desc">Status: WARNING - Throttling information unavailable. Raw output: ${data.voltage.raw || 'N/A'}</div>
+                        </div>
+                    `;
                 }
             } else {
                 voltageEl.textContent = status;
