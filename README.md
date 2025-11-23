@@ -222,10 +222,9 @@ Output:
     inet6 fe80::ff97:5ec0:9060:4761/64 scope link noprefixroute
        valid_lft forever preferred_lft forever
 ```
-
-📌 **Static IP Chosen:** `192.168.137.50`
-📌 **Use Case:** SSH access + hosting web dashboard
-📌 **Verification:** Pi reachable from host using:
+**Static IP Chosen:** `192.168.137.50`
+**Use Case:** SSH access + hosting web dashboard
+**Verification:** Pi reachable from host using:
 
 ```bash
 ssh natel@192.168.137.50
