@@ -19,9 +19,3 @@ dev = []
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-dev-dependencies = []
-
-[tool.uv.sources]
-# Optional: specify custom sources for packages if needed
-
