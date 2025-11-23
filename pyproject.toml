@@ -3,7 +3,7 @@ name = "baja-testbench"
 version = "1.0.0"
 description = "Hardware-in-the-Loop test server for drivetrain subsystem validation"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "fastapi>=0.121.3",
     "uvicorn[standard]>=0.38.0",
